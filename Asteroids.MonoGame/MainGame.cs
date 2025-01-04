@@ -1,12 +1,12 @@
-﻿using Asteroids.MonoGame.Services;
+﻿using Asteroids.MonoGame.Sprites;
 
 namespace Asteroids.MonoGame;
 
 public class MainGame : Game
 {
-    private readonly GraphicsDeviceManager _graphics;
+    private GraphicsDeviceManager _graphics;
     private SpriteBatch _spriteBatch;
-    private GameService _gameService;
+    private List<Sprite> _sprites;
 
     public MainGame()
     {
@@ -19,13 +19,9 @@ public class MainGame : Game
 
     protected override void Initialize()
     {
-        _graphics.PreferredBackBufferWidth = 1024;
-        _graphics.PreferredBackBufferHeight = 768;
+        _graphics.PreferredBackBufferWidth = 1280;
+        _graphics.PreferredBackBufferHeight = 720;
         _graphics.ApplyChanges();
-
-        Globals.Content = Content;
-
-        _gameService = new();
 
         base.Initialize();
     }
@@ -33,7 +29,21 @@ public class MainGame : Game
     protected override void LoadContent()
     {
         _spriteBatch = new SpriteBatch(GraphicsDevice);
-        Globals.SpriteBatch = _spriteBatch;
+
+        var ship = Content.Load<Texture2D>("ship");
+
+        _sprites =
+        [
+            new Ship(ship)
+            {
+                Position = new Vector2(200, 200),
+                Scale = 0.1f,
+                Bullet = new Bullet(Content.Load<Texture2D>("bullet"))
+                {
+                    Scale = 0.05f
+                }
+            }
+        ];
     }
 
     protected override void Update(GameTime gameTime)
@@ -43,10 +53,25 @@ public class MainGame : Game
             Exit();
         }
 
-        Globals.Update(gameTime);
-        _gameService.Update();
+        for (var i = 0; i < _sprites.Count; i++)
+        {
+            _sprites[i].Update(gameTime, _sprites);
+        }
+
+        PostUpdate();
 
         base.Update(gameTime);
+    }
+
+    private void PostUpdate()
+    {
+        for (var i = _sprites.Count - 1; i >= 0; i--)
+        {
+            if (_sprites[i].IsRemoved)
+            {
+                _sprites.RemoveAt(i);
+            }
+        }
     }
 
     protected override void Draw(GameTime gameTime)
@@ -54,7 +79,12 @@ public class MainGame : Game
         GraphicsDevice.Clear(new Color(15, 15, 15));
 
         _spriteBatch.Begin();
-        _gameService.Draw();
+
+        for (var i = 0; i < _sprites.Count; i++)
+        {
+            _sprites[i].Draw(_spriteBatch);
+        }
+
         _spriteBatch.End();
 
         base.Draw(gameTime);
