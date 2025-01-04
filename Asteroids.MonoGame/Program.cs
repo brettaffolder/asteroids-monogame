@@ -1,2 +1,5 @@
-﻿using var game = new Asteroids.MonoGame.Game1();
+﻿using Asteroids.MonoGame;
+
+using var game = new MainGame();
+
 game.Run();
