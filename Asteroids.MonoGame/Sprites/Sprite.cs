@@ -2,11 +2,11 @@
 
 public class Sprite : ICloneable
 {
-    protected Texture2D _texture;
     protected float _rotation;
     protected KeyboardState _currentKey;
     protected KeyboardState _previousKey;
 
+    public Texture2D Texture { get; set; }
     public Vector2 Position { get; set; } = default;
     public Vector2 Origin { get; set; } = default;
     public Vector2 Direction { get; set; } = default;
@@ -19,9 +19,9 @@ public class Sprite : ICloneable
 
     public Sprite(Texture2D texture)
     {
-        _texture = texture;
+        Texture = texture;
 
-        Origin = new Vector2(_texture.Width / 2, _texture.Height / 2);
+        Origin = new Vector2(Texture.Width / 2, Texture.Height / 2);
     }
 
     public void SetRotation(float rotation)
@@ -36,7 +36,7 @@ public class Sprite : ICloneable
 
     public virtual void Draw(SpriteBatch spriteBatch)
     {
-        spriteBatch.Draw(_texture, Position, null, Color.White, _rotation, Origin, Scale, SpriteEffects.None, 0);
+        spriteBatch.Draw(Texture, Position, null, Color.White, _rotation, Origin, Scale, SpriteEffects.None, 0);
     }
 
     public object Clone()

@@ -38,7 +38,7 @@ public class Ship(Texture2D texture) : Sprite(texture)
         bullet.Direction = Direction;
         bullet.Position = Position;
         bullet.LinearVelocity = LinearVelocity * 2;
-        bullet.LifeSpan = 2.0f;
+        bullet.LifeSpan = 3.0f;
         bullet.Parent = this;
 
         bullet.SetRotation(_rotation + MathHelper.ToRadians(-90));
