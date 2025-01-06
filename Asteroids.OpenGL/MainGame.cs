@@ -25,6 +25,11 @@ public class MainGame : Game
     private SoundEffect _shoot;
     private SoundEffect _gameOver;
     private SoundEffect _hit;
+    private SoundEffect _title;
+    private SoundEffect _game;
+
+    private SoundEffectInstance _titleInstance;
+    private SoundEffectInstance _gameInstance;
 
     private List<Sprite> _sprites = [];
     private bool _hasStarted = false;
@@ -65,6 +70,20 @@ public class MainGame : Game
         _shoot = Content.Load<SoundEffect>("shoot");
         _gameOver = Content.Load<SoundEffect>("game_over");
         _hit = Content.Load<SoundEffect>("hit");
+        _title = Content.Load<SoundEffect>("title");
+        _game = Content.Load<SoundEffect>("game");
+
+        _titleInstance = _title.CreateInstance();
+        _gameInstance = _game.CreateInstance();
+
+
+        _titleInstance.Volume = 0.04f;
+        _titleInstance.IsLooped = true;
+
+        _gameInstance.Volume = 0.04f;
+        _gameInstance.IsLooped = true;
+
+        _titleInstance.Play();
     }
 
     protected override void Update(GameTime gameTime)
@@ -109,11 +128,10 @@ public class MainGame : Game
         _spriteBatch.Begin();
 
         _spriteBatch.Draw(_background, new Rectangle(0, 0, Globals.WindowWidth, Globals.WindowHeight), Color.White);
+        _spriteBatch.DrawString(_font, $"SCORE: {_score}", new Vector2(5, 5), Color.White);
 
         if (_hasStarted)
         {
-            _spriteBatch.DrawString(_font, $"SCORE: {_score}", new Vector2(5, 5), Color.White);
-
             for (var i = 0; i < _sprites.Count; i++)
             {
                 _sprites[i].Draw(_spriteBatch);
@@ -166,6 +184,11 @@ public class MainGame : Game
     {
         _playCount++;
 
+        _score = 0;
+
+        _titleInstance.Stop();
+        _gameInstance.Play();
+
         _sprites.Add(new Ship(_ship, _shoot)
         {
             Position = new Vector2((Globals.WindowWidth / 2) - (_ship.Width * Globals.ShipScale / 2), (Globals.WindowHeight / 2) - (_ship.Height * Globals.ShipScale / 2)),
@@ -178,8 +201,9 @@ public class MainGame : Game
 
     private void Restart()
     {
+        _gameInstance.Stop();
+        _titleInstance.Play();
         _sprites.Clear();
-        _score = 0;
         _hasStarted = false;
     }
 
