@@ -31,12 +31,16 @@ public class MainGame : Game
     private SoundEffectInstance _titleInstance;
     private SoundEffectInstance _gameInstance;
 
+    private KeyboardState _currentKey;
+    private KeyboardState _previousKey;
+
     private List<Sprite> _sprites = [];
     private bool _hasStarted = false;
     private int _score = 0;
     private int _timer = 0;
     private Random _random = new();
     private int _playCount = 0;
+    private bool _isPaused = false;
 
     public MainGame()
     {
@@ -88,18 +92,35 @@ public class MainGame : Game
 
     protected override void Update(GameTime gameTime)
     {
-        if (Keyboard.GetState().IsKeyDown(Keys.Escape))
+        _previousKey = _currentKey;
+        _currentKey = Keyboard.GetState();
+
+        if (_currentKey.IsKeyDown(Keys.Escape) && _previousKey.IsKeyUp(Keys.Escape))
         {
-            Exit();
+            if (_hasStarted)
+            {
+                _isPaused = !_isPaused;
+
+                if (_isPaused)
+                {
+                    _gameInstance.Pause();
+                    _titleInstance.Play();
+                }
+                else
+                {
+                    _titleInstance.Pause();
+                    _gameInstance.Play();
+                }
+            }
         }
 
-        if (Keyboard.GetState().IsKeyDown(Keys.Space) && !_hasStarted)
+        if (_currentKey.IsKeyDown(Keys.Space) && _previousKey.IsKeyUp(Keys.Space) && !_hasStarted)
         {
             Start();
             _hasStarted = true;
         }
 
-        if (_hasStarted)
+        if (_hasStarted && !_isPaused)
         {
             for (var i = 0; i < _sprites.Count; i++)
             {
@@ -132,6 +153,15 @@ public class MainGame : Game
 
         if (_hasStarted)
         {
+            if (_isPaused)
+            {
+                var viewport = _graphics.GraphicsDevice.Viewport;
+                var output = "PAUSED";
+                var position = new Vector2(viewport.Width / 2, viewport.Height / 2);
+                var origin = _font.MeasureString(output) / 2;
+                _spriteBatch.DrawString(_font, output, position, Color.White, 0, origin, 1.5f, SpriteEffects.None, 0);
+            }
+
             for (var i = 0; i < _sprites.Count; i++)
             {
                 _sprites[i].Draw(_spriteBatch);
