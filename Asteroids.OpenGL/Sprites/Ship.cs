@@ -2,14 +2,17 @@
 using System.Collections.Generic;
 
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
 namespace Asteroids.OpenGL.Sprites;
 
-public class Ship(Texture2D texture) : Sprite(texture)
+public class Ship(Texture2D texture, SoundEffect shoot) : Sprite(texture)
 {
     public Bullet Bullet { get; set; }
+
+    private readonly SoundEffect _shoot = shoot;
 
     public override void Update(GameTime gameTime, List<Sprite> sprites)
     {
@@ -52,5 +55,9 @@ public class Ship(Texture2D texture) : Sprite(texture)
         bullet.Parent = this;
 
         sprites.Add(bullet);
+
+        var i = _shoot.CreateInstance();
+        i.Volume = 0.1f;
+        i.Play();
     }
 }

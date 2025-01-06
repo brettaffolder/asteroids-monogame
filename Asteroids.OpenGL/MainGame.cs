@@ -5,6 +5,7 @@ using System.Linq;
 using Asteroids.OpenGL.Sprites;
 
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
@@ -21,12 +22,16 @@ public class MainGame : Game
     private Texture2D _mediumAsteroid;
     private Texture2D _largeAsteroid;
     private SpriteFont _font;
+    private SoundEffect _shoot;
+    private SoundEffect _gameOver;
+    private SoundEffect _hit;
 
     private List<Sprite> _sprites = [];
     private bool _hasStarted = false;
     private int _score = 0;
     private int _timer = 0;
     private Random _random = new();
+    private int _playCount = 0;
 
     public MainGame()
     {
@@ -57,6 +62,9 @@ public class MainGame : Game
         _mediumAsteroid = Content.Load<Texture2D>("asteroid_medium");
         _largeAsteroid = Content.Load<Texture2D>("asteroid_large");
         _font = Content.Load<SpriteFont>("pixel_font");
+        _shoot = Content.Load<SoundEffect>("shoot");
+        _gameOver = Content.Load<SoundEffect>("game_over");
+        _hit = Content.Load<SoundEffect>("hit");
     }
 
     protected override void Update(GameTime gameTime)
@@ -114,10 +122,28 @@ public class MainGame : Game
         else
         {
             var viewport = _graphics.GraphicsDevice.Viewport;
-            var position = new Vector2(viewport.Width / 2, viewport.Height / 2);
-            var output = "PRESS [SPACE] TO START";
-            var origin = _font.MeasureString(output) / 2;
-            _spriteBatch.DrawString(_font, output, position, Color.White, 0, origin, 1.5f, SpriteEffects.None, 0);
+
+            if (_playCount > 0)
+            {
+                var output1 = "GAME OVER!";
+                var output2 = "PRESS [SPACE] TO RESTART";
+
+                var position1 = new Vector2(viewport.Width / 2, (viewport.Height / 2) - 16);
+                var position2 = new Vector2(viewport.Width / 2, (viewport.Height / 2) + 16);
+
+                var origin1 = _font.MeasureString(output1) / 2;
+                var origin2 = _font.MeasureString(output2) / 2;
+
+                _spriteBatch.DrawString(_font, output1, position1, Color.White, 0, origin1, 1.5f, SpriteEffects.None, 0);
+                _spriteBatch.DrawString(_font, output2, position2, Color.White, 0, origin2, 1.5f, SpriteEffects.None, 0);
+            }
+            else
+            {
+                var output = "PRESS [SPACE] TO START";
+                var position = new Vector2(viewport.Width / 2, viewport.Height / 2);
+                var origin = _font.MeasureString(output) / 2;
+                _spriteBatch.DrawString(_font, output, position, Color.White, 0, origin, 1.5f, SpriteEffects.None, 0);
+            }
         }
 
         _spriteBatch.End();
@@ -138,7 +164,9 @@ public class MainGame : Game
 
     private void Start()
     {
-        _sprites.Add(new Ship(_ship)
+        _playCount++;
+
+        _sprites.Add(new Ship(_ship, _shoot)
         {
             Position = new Vector2((Globals.WindowWidth / 2) - (_ship.Width * Globals.ShipScale / 2), (Globals.WindowHeight / 2) - (_ship.Height * Globals.ShipScale / 2)),
             LinearVelocity = Globals.ShipLinearVelocity,
@@ -267,6 +295,9 @@ public class MainGame : Game
 
             if (shipDistance <= (shipRadius + asteroidRadius))
             {
+                var instance = _gameOver.CreateInstance();
+                instance.Volume = 0.1f;
+                instance.Play();
                 Restart();
             }
 
@@ -284,6 +315,10 @@ public class MainGame : Game
                     _ = _sprites.Remove(bullets[j]);
 
                     _score += 5;
+
+                    var instance = _hit.CreateInstance();
+                    instance.Volume = 0.1f;
+                    instance.Play();
 
                     if (asteroids[i].Type != AsteroidType.Small)
                     {
