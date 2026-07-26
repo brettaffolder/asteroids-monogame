@@ -1,9 +1,23 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 17
-VisualStudioVersion = 17.12.35527.113
+# Visual Studio Version 18
+VisualStudioVersion = 18.8.12021.73 stable
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Asteroids.OpenGL", "Asteroids.OpenGL\Asteroids.OpenGL.csproj", "{B463A5A6-3E6E-46C6-A17F-76A66BE3C7DD}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{1724F02A-BD0C-4684-86F6-EA34709C1E08}"
+	ProjectSection(SolutionItems) = preProject
+		README.md = README.md
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "screenshots", "screenshots", "{CE3E6F6D-3ECF-4D09-9D50-1ED167A13EC3}"
+	ProjectSection(SolutionItems) = preProject
+		C:\Users\brett\Desktop\folder.png = C:\Users\brett\Desktop\folder.png
+		C:\Users\brett\Desktop\gameplay.png = C:\Users\brett\Desktop\gameplay.png
+		C:\Users\brett\Desktop\lost.png = C:\Users\brett\Desktop\lost.png
+		C:\Users\brett\Desktop\pause.png = C:\Users\brett\Desktop\pause.png
+		C:\Users\brett\Desktop\start.png = C:\Users\brett\Desktop\start.png
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -18,5 +32,11 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{CE3E6F6D-3ECF-4D09-9D50-1ED167A13EC3} = {1724F02A-BD0C-4684-86F6-EA34709C1E08}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {DA2B6FA7-19EE-4FC3-89B8-B73DE394664C}
 	EndGlobalSection
 EndGlobal
